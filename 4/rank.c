@@ -1,4 +1,6 @@
 #define  MAX_VERTICES 100
+#define  MAX_ELEMENTS 100
+#include <stdio.h>
 
 typedef struct {
     int n;
@@ -15,26 +17,8 @@ void init_graph(Graph* G, int n) {
 	}
 }
 
-void add_edge(Graph* G, int e, int x, int y) {
-	G->A[x][e] = 1;
-	G->A[y][e] = 1;
-}
-int adjacent(Graph* G, int x, int y) {
-    int j;
-    for(j = 1; j <= G->adj[x].size; j++) {
-        if(element_at(&G->adj[x], j) == y) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-int degree(Graph* G, int x) {
-	int y, deg = 0;
-	for( y = 1; y <= G->m; y++) {
-		deg +=  G->A[x][y];
-	}
-	return deg;
+void add_edge(Graph* G, int x, int y) {
+	G->A[x][y] = 1;
 }
 
 typedef int ElementType;
@@ -58,21 +42,10 @@ int count_list(List*L) {
     return L->size;
 }
 
-List neighbors(Graph* G, int x) {
-    int y;
-    List list;
-    make_null(&list);
-    for(y = 1; y <= G->n; y++) {
-        if(adjacent(G, x, y)) {
-            push_back(&list, y);
-        }
-    }
-    return list;
-}
 
-// rank
+/// rank
 int rank[MAX_VERTICES];
-void ranking(Graph* G) {
+void topo_sort(Graph* G, List* L) {
     int d[MAX_VERTICES];
     int x, u;
 
@@ -104,6 +77,7 @@ void ranking(Graph* G) {
         for(i = 1; i <= S1.size; i++) {
             int u = element_at(&S1, i);
             rank[u] = k;
+            push_back(L, u);
             int v;
             for(v = 1; v <= G->n; v++) {
                 if(G->A[u][v] != 0) {
@@ -117,6 +91,44 @@ void ranking(Graph* G) {
         S1 = S2;
         k++;
     }
+}
 
+int main() {
+    int n = 10, m = 10;
+    int x, y;
+    Graph G;
+    List L;
+    make_null(&L);
+    // scanf("%d%d", &n, &m);
+    init_graph(&G, n+2);
+    // for(int i = 0; i < m; i++) {
+    //     scanf("%d%d", &x, &y);
+    //     add_edge(&G, x, y);
+    // }
+
+    // add_edge(&G, 1, 3);
+    // add_edge(&G, 3, 2);
+    
+    add_edge(&G, 1, 2);
+    add_edge(&G, 2, 3);
+    add_edge(&G, 1, 4);
+    add_edge(&G, 3, 5);
+    add_edge(&G, 4, 5);
+    add_edge(&G, 3, 6);
+    add_edge(&G, 4, 6);
+    add_edge(&G, 3, 7);
+    add_edge(&G, 4, 7);
+    add_edge(&G, 6, 8);
+    add_edge(&G, 8, 9);
+    add_edge(&G, 5, 10);
+    add_edge(&G, 7, 10);
+    add_edge(&G, 9, 10);
+    
+    topo_sort(&G, &L);
+
+    printf("\n");
+    for(int i = 1; i <= n+2; i++) {
+        printf("%d ", element_at(&L, i));
+    }
 
 }

@@ -1,5 +1,6 @@
 #define  MAX_VERTICES 100
 #define INFINITY 99999
+#define MAX_ELEMENTS 100
 
 typedef struct {
     int n;
@@ -16,27 +17,11 @@ void init_graph(Graph* G, int n) {
 	}
 }
 
-void add_edge(Graph* G, int e, int x, int y) {
-	G->A[x][e] = 1;
-	G->A[y][e] = 1;
-}
-int adjacent(Graph* G, int x, int y) {
-    int j;
-    for(j = 1; j <= G->adj[x].size; j++) {
-        if(element_at(&G->adj[x], j) == y) {
-            return 1;
-        }
-    }
-    return 0;
+void add_edge(Graph* G, int x, int y) {
+	G->A[x][y] = 1;
 }
 
-int degree(Graph* G, int x) {
-	int y, deg = 0;
-	for( y = 1; y <= G->m; y++) {
-		deg +=  G->A[x][y];
-	}
-	return deg;
-}
+
 
 typedef int ElementType;
 typedef struct {
@@ -59,29 +44,19 @@ int count_list(List*L) {
     return L->size;
 }
 
-List neighbors(Graph* G, int x) {
-    int y;
-    List list;
-    make_null(&list);
-    for(y = 1; y <= G->n; y++) {
-        if(adjacent(G, x, y)) {
-            push_back(&list, y);
-        }
-    }
-    return list;
-}
-
 int min(int a, int b) {
     return a > b ? b : a;
 }
 
-int min(int a, int b) {
+int max(int a, int b) {
     return a > b ? a : b;
 }
 
 int main() {
     Graph G;
     int n, u, x, v ,j;
+    List L;
+    make_null(&L);
 
     // 1. Đọc đồ thị
 
